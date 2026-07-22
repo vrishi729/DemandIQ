@@ -1,7 +1,5 @@
 from typing import Any
 
-import re
-
 import pandas as pd
 
 
@@ -71,7 +69,9 @@ def clean_dataframe(
         mapped = mapped.dropna(subset=['quantity_sold'])
         report['rows_dropped_missing_quantity'] = before - len(mapped)
 
-        mapped['quantity_sold'] = pd.to_numeric(_strip_currency(mapped['quantity_sold']), errors='coerce')
+        mapped['quantity_sold'] = pd.to_numeric(
+            _strip_currency(mapped['quantity_sold']), errors='coerce',
+        )
         before = len(mapped)
         mask = (mapped['quantity_sold'] <= 0) | mapped['quantity_sold'].isna()
         mapped = mapped[~mask]

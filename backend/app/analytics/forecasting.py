@@ -6,8 +6,8 @@ import pandas as pd
 from sqlalchemy import func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.forecast import Forecast
 from app.core.db_utils import date_trunc
+from app.models.forecast import Forecast
 from app.models.sales_record import SalesRecord
 
 HORIZON_MAP = {
@@ -120,7 +120,6 @@ def run_forecast(
 
         mae = float(np.mean(np.abs(fitted.resid)))
         mape_val = float(np.nanmean(np.abs(fitted.resid / series.replace(0, np.nan)))) * 100
-        series_std = float(series.std()) if len(series) > 1 else 0
         cv = resid_std / (series.mean() + 1e-10)
         horizon_penalty = 1.0 / (1.0 + 0.05 * steps)
         confidence = max(0.0, min(1.0, (1.0 / (1.0 + cv)) * horizon_penalty))

@@ -305,10 +305,15 @@ async def get_full_analytics(
     months_back: int | None = None,
     year: str | None = None,
 ) -> dict[str, Any]:
-    start = await _compute_start_date(db, user_id, dataset_id, months_back, year) if months_back is not None else None
+    start = (
+        await _compute_start_date(db, user_id, dataset_id, months_back, year)
+        if months_back is not None else None
+    )
     kpi = await get_kpi_summary(db, user_id, dataset_id)
     top_products = await get_top_products(db, user_id, dataset_id, start_date=start, year=year)
-    all_products = await get_top_products(db, user_id, dataset_id, limit=999, start_date=start, year=year)
+    all_products = await get_top_products(
+        db, user_id, dataset_id, limit=999, start_date=start, year=year,
+    )
     category_perf = await get_category_performance(db, user_id, dataset_id)
     monthly_trends = await get_sales_trends(db, user_id, dataset_id, 'month')
     growth = await get_sales_growth(db, user_id, dataset_id)
@@ -332,10 +337,17 @@ async def get_full_analytics(
 
     avg_monthly_rev = 0.0
     if monthly_trends:
-        avg_monthly_rev = round(sum(t['total_revenue'] for t in monthly_trends) / len(monthly_trends), 2)
+        total = sum(t['total_revenue'] for t in monthly_trends)
+        avg_monthly_rev = round(total / len(monthly_trends), 2)
 
-    highest_rev_product = max(all_products, key=lambda p: p['total_revenue'])['product_name'] if all_products else None
-    lowest_rev_product = min(all_products, key=lambda p: p['total_revenue'])['product_name'] if all_products else None
+    highest_rev_product = (
+        max(all_products, key=lambda p: p['total_revenue'])['product_name']
+        if all_products else None
+    )
+    lowest_rev_product = (
+        min(all_products, key=lambda p: p['total_revenue'])['product_name']
+        if all_products else None
+    )
 
     avg_monthly_growth = 0.0
     if len(monthly_trends) >= 2:

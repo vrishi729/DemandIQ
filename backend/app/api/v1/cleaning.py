@@ -102,7 +102,10 @@ async def clean_dataset(
     await db.flush()
 
     product_names = cleaned_df['product_name'].dropna().unique().tolist()
-    category_col = cleaned_df['category'] if 'category' in cleaned_df.columns else pd.Series(dtype=str)
+    category_col = (
+        cleaned_df['category']
+        if 'category' in cleaned_df.columns else pd.Series(dtype=str)
+    )
     categories = category_col.dropna().unique().tolist()
     date_col = cleaned_df['order_date']
     date_range = (

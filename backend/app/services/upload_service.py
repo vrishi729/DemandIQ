@@ -168,9 +168,16 @@ def read_file_to_dataframe(content: bytes, filename: str) -> pd.DataFrame:
     try:
         if ext == '.csv':
             try:
-                return pd.read_csv(io.BytesIO(content), encoding='utf-8-sig', dtype_backend='numpy_nullable')
+                return pd.read_csv(
+                    io.BytesIO(content), encoding='utf-8-sig',
+                    dtype_backend='numpy_nullable',
+                )
             except (UnicodeDecodeError, pd.errors.ParserError):
-                return pd.read_csv(io.BytesIO(content), encoding='latin-1', sep=None, engine='python', dtype_backend='numpy_nullable')
+                return pd.read_csv(
+                    io.BytesIO(content), encoding='latin-1',
+                    sep=None, engine='python',
+                    dtype_backend='numpy_nullable',
+                )
         else:
             return pd.read_excel(io.BytesIO(content), dtype_backend='numpy_nullable')
     except Exception as e:

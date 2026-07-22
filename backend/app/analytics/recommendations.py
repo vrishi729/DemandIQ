@@ -7,10 +7,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.analytics.engine import (
     get_category_performance,
     get_kpi_summary,
+    get_product_growth,
     get_sales_growth,
     get_sales_trends,
     get_top_products,
-    get_product_growth,
 )
 from app.analytics.forecasting import get_or_run_forecast
 
@@ -128,7 +128,7 @@ async def generate_recommendations(
                 f'Sales declined {abs(a["growth"]):.1f}% year-over-year '
                 f'({p["total_quantity"]} units, {a["rev_pct"]:.1f}% of revenue). '
                 'Investigate root cause — competitor action, pricing issues, or changing '
-                'customer preferences. Consider a promotional campaign or bundling to revive demand.'
+                'customer preferences. Consider a campaign or bundling to revive demand.'
             ),
         })
 
@@ -174,8 +174,9 @@ async def generate_recommendations(
                 'type': 'action',
                 'title': 'Bundling opportunity identified',
                 'description': (
-                    f'{top_bundle["product_name"]} sells well ({top_bundle["total_quantity"]} units) '
-                    f'but at a low price point (${top_bundle["total_revenue"] / top_bundle["total_quantity"]:.2f}/unit). '
+                    f'{top_bundle["product_name"]} sells '
+                    f'({top_bundle["total_quantity"]} units) '
+                    f'at ${top_bundle["total_revenue"] / top_bundle["total_quantity"]:.2f}/unit. '
                     f'Bundle it with top sellers like {top_sellers[0]["product_name"]} to '
                     'increase average order value while moving volume.'
                 ),
@@ -184,7 +185,6 @@ async def generate_recommendations(
 
     # --- Seasonal pattern ---
     if len(trends) >= 12:
-        from collections import Counter
         from calendar import month_name
         month_revenues = defaultdict(list)
         for t in trends:
@@ -197,14 +197,14 @@ async def generate_recommendations(
             overall_avg = sum(month_avg.values()) / len(month_avg)
             if overall_avg > 0 and peak_avg > overall_avg * 1.15:
                 boost_pct = ((peak_avg / overall_avg) - 1) * 100
-                num_years = max(1, len(set(t['period'][:4] for t in trends)))
+                num_years = max(1, len({t['period'][:4] for t in trends}))
                 recommendations.append({
                     'type': 'info',
                     'title': f'{month_name[int(best_month_num)]} is your peak season',
                     'description': (
-                        f'Over {num_years} year(s) of data, {month_name[int(best_month_num)]} averages '
-                        f'${peak_avg:,.0f} in revenue — {boost_pct:.0f}% above the yearly average of '
-                        f'${overall_avg:,.0f}. Start building inventory 6-8 weeks ahead to maximize '
+                        f'Over {num_years}y of data, {month_name[int(best_month_num)]} averages '
+                        f'${peak_avg:,.0f} — {boost_pct:.0f}% above the yearly avg of '
+                        f'${overall_avg:,.0f}. Build inventory 6-8 weeks ahead to maximize '
                         'this consistent seasonal pattern.'
                     ),
                 })
