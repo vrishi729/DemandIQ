@@ -1,4 +1,5 @@
 import uuid
+from datetime import date
 
 import pytest
 
@@ -21,7 +22,7 @@ def sample_records() -> list[SalesRecord]:
             id=uuid.uuid4(),
             dataset_id=did,
             user_id=uid,
-            order_date='2024-01-05',
+            order_date=date(2024, 1, 5),
             product_name='Coffee',
             category='Beverages',
             quantity_sold=15,
@@ -32,7 +33,7 @@ def sample_records() -> list[SalesRecord]:
             id=uuid.uuid4(),
             dataset_id=did,
             user_id=uid,
-            order_date='2024-01-06',
+            order_date=date(2024, 1, 6),
             product_name='Milk',
             category='Dairy',
             quantity_sold=30,
@@ -43,7 +44,7 @@ def sample_records() -> list[SalesRecord]:
             id=uuid.uuid4(),
             dataset_id=did,
             user_id=uid,
-            order_date='2024-02-05',
+            order_date=date(2024, 2, 5),
             product_name='Coffee',
             category='Beverages',
             quantity_sold=20,

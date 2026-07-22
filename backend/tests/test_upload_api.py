@@ -36,7 +36,10 @@ async def test_upload_missing_columns(client: AsyncClient, auth_headers: dict[st
         files={'file': ('bad.csv', csv_content, 'text/csv')},
         headers=auth_headers,
     )
-    assert resp.status_code == 400
+    assert resp.status_code == 201
+    data = resp.json()
+    assert not data['is_valid']
+    assert 'order_date' in data['health_summary']['missing_required_columns']
 
 
 async def test_upload_wrong_extension(client: AsyncClient, auth_headers: dict[str, str]):

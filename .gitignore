@@ -39,7 +39,9 @@ uploads/
 *.xlsx
 *.csv
 !tests/fixtures/*.csv
+!backend/tests/fixtures/*.csv
 !tests/fixtures/*.xlsx
+!backend/tests/fixtures/*.xlsx
 
 # Alembic
 alembic/versions/*.pyc

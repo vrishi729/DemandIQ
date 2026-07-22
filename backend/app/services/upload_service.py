@@ -181,6 +181,8 @@ def read_file_to_dataframe(content: bytes, filename: str) -> pd.DataFrame:
                     engine='python',
                     dtype_backend='numpy_nullable',
                 )
+            except pd.errors.EmptyDataError:
+                return pd.DataFrame()
         else:
             return pd.read_excel(io.BytesIO(content), dtype_backend='numpy_nullable')
     except Exception as e:
