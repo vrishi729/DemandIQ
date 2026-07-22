@@ -103,13 +103,12 @@ async def clean_dataset(
 
     product_names = cleaned_df['product_name'].dropna().unique().tolist()
     category_col = (
-        cleaned_df['category']
-        if 'category' in cleaned_df.columns else pd.Series(dtype=str)
+        cleaned_df['category'] if 'category' in cleaned_df.columns else pd.Series(dtype=str)
     )
     categories = category_col.dropna().unique().tolist()
     date_col = cleaned_df['order_date']
     date_range = (
-        f"{date_col.min().strftime('%b %Y')} – {date_col.max().strftime('%b %Y')}"
+        f'{date_col.min().strftime("%b %Y")} – {date_col.max().strftime("%b %Y")}'
         if not date_col.empty and hasattr(date_col.min(), 'strftime')
         else None
     )

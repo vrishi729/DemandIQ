@@ -38,7 +38,8 @@ def clean_dataframe(
         report['rows_dropped_missing_date'] = before - len(mapped)
 
         mapped['order_date'] = pd.to_datetime(
-            mapped['order_date'], errors='coerce',
+            mapped['order_date'],
+            errors='coerce',
         )
         before = len(mapped)
         mapped = mapped.dropna(subset=['order_date'])
@@ -70,7 +71,8 @@ def clean_dataframe(
         report['rows_dropped_missing_quantity'] = before - len(mapped)
 
         mapped['quantity_sold'] = pd.to_numeric(
-            _strip_currency(mapped['quantity_sold']), errors='coerce',
+            _strip_currency(mapped['quantity_sold']),
+            errors='coerce',
         )
         before = len(mapped)
         mask = (mapped['quantity_sold'] <= 0) | mapped['quantity_sold'].isna()

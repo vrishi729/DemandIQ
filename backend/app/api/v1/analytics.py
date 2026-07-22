@@ -28,9 +28,14 @@ async def analytics_overview(
     did = uuid.UUID(dataset_id) if dataset_id else None
     months_back = PERIOD_MAP.get(period)
 
-    years_q = select(func.strftime('%Y', SalesRecord.order_date)).where(
-        SalesRecord.user_id == current_user.id,
-    ).distinct().order_by(func.strftime('%Y', SalesRecord.order_date))
+    years_q = (
+        select(func.strftime('%Y', SalesRecord.order_date))
+        .where(
+            SalesRecord.user_id == current_user.id,
+        )
+        .distinct()
+        .order_by(func.strftime('%Y', SalesRecord.order_date))
+    )
     if did is not None:
         years_q = years_q.where(SalesRecord.dataset_id == did)
     years_result = await db.execute(years_q)

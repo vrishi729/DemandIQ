@@ -102,9 +102,7 @@ async def get_top_products(
         q = q.where(func.strftime('%Y', SalesRecord.order_date) == year)
 
     order_func = (
-        func.sum(SalesRecord.revenue).desc()
-        if order == 'desc'
-        else func.sum(SalesRecord.revenue)
+        func.sum(SalesRecord.revenue).desc() if order == 'desc' else func.sum(SalesRecord.revenue)
     )
     q = q.order_by(order_func).limit(limit)
 
@@ -226,8 +224,13 @@ async def get_sales_growth(
             'previous_period': previous_year,
         }
 
-    return {'growth_rate': 0.0, 'current_period_revenue': 0.0, 'previous_period_revenue': 0.0,
-            'current_period': current_year, 'previous_period': previous_year}
+    return {
+        'growth_rate': 0.0,
+        'current_period_revenue': 0.0,
+        'previous_period_revenue': 0.0,
+        'current_period': current_year,
+        'previous_period': previous_year,
+    }
 
 
 async def get_product_growth(
@@ -307,12 +310,18 @@ async def get_full_analytics(
 ) -> dict[str, Any]:
     start = (
         await _compute_start_date(db, user_id, dataset_id, months_back, year)
-        if months_back is not None else None
+        if months_back is not None
+        else None
     )
     kpi = await get_kpi_summary(db, user_id, dataset_id)
     top_products = await get_top_products(db, user_id, dataset_id, start_date=start, year=year)
     all_products = await get_top_products(
-        db, user_id, dataset_id, limit=999, start_date=start, year=year,
+        db,
+        user_id,
+        dataset_id,
+        limit=999,
+        start_date=start,
+        year=year,
     )
     category_perf = await get_category_performance(db, user_id, dataset_id)
     monthly_trends = await get_sales_trends(db, user_id, dataset_id, 'month')
@@ -342,11 +351,13 @@ async def get_full_analytics(
 
     highest_rev_product = (
         max(all_products, key=lambda p: p['total_revenue'])['product_name']
-        if all_products else None
+        if all_products
+        else None
     )
     lowest_rev_product = (
         min(all_products, key=lambda p: p['total_revenue'])['product_name']
-        if all_products else None
+        if all_products
+        else None
     )
 
     avg_monthly_growth = 0.0

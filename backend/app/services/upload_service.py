@@ -169,13 +169,16 @@ def read_file_to_dataframe(content: bytes, filename: str) -> pd.DataFrame:
         if ext == '.csv':
             try:
                 return pd.read_csv(
-                    io.BytesIO(content), encoding='utf-8-sig',
+                    io.BytesIO(content),
+                    encoding='utf-8-sig',
                     dtype_backend='numpy_nullable',
                 )
-            except (UnicodeDecodeError, pd.errors.ParserError):
+            except UnicodeDecodeError, pd.errors.ParserError:
                 return pd.read_csv(
-                    io.BytesIO(content), encoding='latin-1',
-                    sep=None, engine='python',
+                    io.BytesIO(content),
+                    encoding='latin-1',
+                    sep=None,
+                    engine='python',
                     dtype_backend='numpy_nullable',
                 )
         else:
@@ -224,7 +227,8 @@ def validate_and_summarize(df: pd.DataFrame) -> HealthSummary:
 
     if 'order_date' in mapped_df.columns:
         parsed_dates = pd.to_datetime(
-            mapped_df['order_date'], errors='coerce',
+            mapped_df['order_date'],
+            errors='coerce',
         )
         invalid_date_count = int(parsed_dates.isna().sum())
         summary.invalid_dates = invalid_date_count
@@ -235,7 +239,7 @@ def validate_and_summarize(df: pd.DataFrame) -> HealthSummary:
             qty_num = pd.to_numeric(qty, errors='coerce')
             neg_mask = (qty_num < 0) & qty_num.notna()
             summary.negative_quantities = int(neg_mask.sum())
-        except (ValueError, TypeError):
+        except ValueError, TypeError:
             summary.type_errors.setdefault('quantity_sold', [])
             summary.type_errors['quantity_sold'].append('Could not convert to numeric')
 

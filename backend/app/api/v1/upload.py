@@ -63,6 +63,7 @@ async def delete_dataset(
         file_path.unlink()
 
     from app.models.sales_record import SalesRecord
+
     await db.execute(SalesRecord.__table__.delete().where(SalesRecord.dataset_id == did))
     await db.delete(dataset)
     await db.flush()

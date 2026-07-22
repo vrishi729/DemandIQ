@@ -26,15 +26,22 @@ SEASONAL_PERIODS = {
 
 def _holt_winters(series, steps, horizon='month'):
     from statsmodels.tsa.holtwinters import ExponentialSmoothing
+
     seasonal_periods = SEASONAL_PERIODS.get(horizon, 12)
     if len(series) < seasonal_periods * 2:
         model = ExponentialSmoothing(
-            series, trend='add', seasonal=None, initialization_method='estimated',
+            series,
+            trend='add',
+            seasonal=None,
+            initialization_method='estimated',
         )
     else:
         model = ExponentialSmoothing(
-            series, trend='add', seasonal='add',
-            seasonal_periods=seasonal_periods, initialization_method='estimated',
+            series,
+            trend='add',
+            seasonal='add',
+            seasonal_periods=seasonal_periods,
+            initialization_method='estimated',
         )
     fitted = model.fit()
     forecast = fitted.forecast(steps)
